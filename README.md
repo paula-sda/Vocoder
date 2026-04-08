@@ -1,32 +1,30 @@
 # Documentación de Práctica: Vocoder en Python
 
-## 1. Descripción del Proyecto
-Este proyecto implementa un sistema Vocoder de 3 bandas diseñado para procesar una señal moduladora (voz) y aplicarla sobre una señal portadora sinusoidal. El objetivo es conseguir el efecto de "voz robótica" mediante la manipulación de la amplitud de diferentes bandas de frecuencia.
+## 1. Implementación y Resolución Técnica
+Debido a problemas de compatibilidad de la librería **PyAudio** con las versiones más recientes de Python en Windows, esta práctica se ha realizado de dos formas:
 
-## 2. Requisitos Técnicos Implementados
-- Frecuencia de muestreo: 16,000 Hz.
-- Procesamiento: Análisis por ventanas de 1024 muestras.
-- Banco de filtros: 3 filtros pasa-banda Butterworth  
-  - Graves: 300-600 Hz  
-  - Medios: 600-2 KHz  
-  - Altos: 2-4 KHz
-- Modulación: Extracción de envolvente mediante rectificación de señal (np.abs) para evitar cancelaciones de fase.
+- **Versión Offline (`vocoder.py`):** Ante los errores iniciales de instalación de drivers, se desarrolló un script que procesa archivos `.wav` pre-grabados para asegurar el funcionamiento del algoritmo.
+- **Versión Real-Time (`vocoder_pyaudio.py`):** Tras realizar un downgrade a **Python 3.12** y configurar los alias del sistema, se logró la integración con el micrófono para procesar audio en vivo.
 
-## 3. Pruebas y Resultados Experimentales
-Durante el desarrollo, se han realizado diferentes pruebas cambiando parámetros de la portadora para analizar la inteligibilidad y calidad del sonido.
+## 2. Requisitos Técnicos
+El sistema implementa un Vocoder de 3 bandas con los siguientes parámetros:
 
-### Prueba 1: Portadora Estándar (440 Hz Sinusoidal)
-**Configuración:** Onda senoidal pura a 440 Hz (Nota La).  
-**Resultado:** Se obtiene un sonido de silbido electrónico. Las vocales son reconocibles, pero las consonantes fricativas (como la "S" o la "J") se pierden debido a la pureza de la onda, que no contiene armónicos para rellenar las bandas agudas.  
-**Observación:** La vocal "U" suena más débil debido a que su energía principal cae por debajo del punto de corte del primer filtro (300 Hz).
+- **Muestreo:** 16,000 Hz / Ventanas de 1024 muestras.
+- **Banco de filtros (Butterworth):**
+  - Graves: 300 - 600 Hz
+  - Medios: 600 - 2,000 Hz
+  - Altos: 2,000 - 4,000 Hz
+- **Modulación:** Extracción de envolvente mediante `np.abs` para aplicar la amplitud de la voz a la portadora.
 
-### Prueba 2: Portadora Grave (110 Hz Sinusoidal)
-**Configuración:** Cambio de frecuencia a 110 Hz.  
-**Resultado:** La voz se percibe más "masculina" y robusta. Se entiende mejor el contenido hablado porque la frecuencia fundamental está más cerca del rango natural de la voz humana.
+## 3. Pruebas Experimentales
+Se han analizado diferentes portadoras para evaluar la claridad del sonido:
 
-### Prueba 3: Portadora Musical (110 Hz Diente de Sierra)
-**Configuración:** Cambio del tipo de onda a sawtooth.  
-**Resultado:** Es el resultado con mayor claridad. Al ser una onda rica en armónicos, todos los filtros (agudos, medios y graves) reciben señal constante. Las palabras se entienden un poco mejor.
+1. **Portadora 440 Hz (Sinusoidal):** Sonido agudo tipo silbido. Vocales reconocibles, pero consonantes poco claras.
+2. **Portadora 110 Hz (Sinusoidal):** Voz más grave que se entiende un poco mejor.
+3. **Portadora 110 Hz (Diente de Sierra):** Mejor resultado. Al tener más armónicos, la voz robótica se entiende mejor en todos los rangos.
 
-## Nota técnica
-Debido a limitaciones de hardware en entorno Windows y ausencia de micrófono, la entrada de datos se realiza mediante lectura de archivos .wav pre-grabados, garantizando la estabilidad del algoritmo y la repetibilidad de las pruebas.
+## 4. Notas de uso
+- Para la versión en tiempo real, se recomienda el uso de **auriculares** para evitar el acople entre los altavoces y el micrófono del portátil.
+- Es imprescindible usar **Python 3.12** para que las librerías de audio funcionen correctamente en este entorno.
+- Instalar dependencias: pip install pyaudio numpy scipy.
+- Para archivo vocover.py: Asegurarse de tener un archivo entrada.wav en el directorio.
